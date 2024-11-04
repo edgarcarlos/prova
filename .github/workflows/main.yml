@@ -1,0 +1,33 @@
+name: Build LaTeX PDF
+
+on:
+  pull_request:
+    branches:
+      - main  # Déclenche la compilation lors des pull requests vers la branche principale
+  push:
+    branches:
+      - main  # Déclenche la compilation lors des pushs vers la branche principale
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up LaTeX environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-full  # Installe tous les paquets LaTeX nécessaires
+
+      - name: Compile LaTeX project
+        run: |
+          latexmk -pdf -interaction=nonstopmode -file-line-error main.tex
+        working-directory: ./VI_2024-10-25  # Remplace `dossier_overleaf` par le nom du dossier contenant les fichiers LaTeX
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-pdf
+          path: VI_2024-10-25/VI_2024-10-25.pdf  # Remplace `main.pdf` par le nom du fichier PDF généré
